@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tech Intelligence Dashboard - Column View</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "primary-hover": "#0f6bd0",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                        "surface-dark": "#182430", // Slightly lighter than background-dark for columns
+                        "card-dark": "#202c3a", // Slightly lighter for cards
+                        "border-dark": "#2a3b4d",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for columns */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1); 
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #2a3b4d; 
+            border-radius: 20px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background-color: #137fec; 
+        }
+        
+        /* Hide scrollbar for horizontal scrolling if needed but allow scroll */
+        .hide-scroll::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 font-display h-screen flex overflow-hidden">
+<!-- Sidebar Navigation -->
+<aside class="w-16 md:w-20 flex-shrink-0 flex flex-col items-center py-6 bg-white dark:bg-[#0c131a] border-r border-gray-200 dark:border-border-dark z-20">
+<div class="mb-8">
+<div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
+<span class="material-icons text-white">hub</span>
+</div>
+</div>
+<nav class="flex-1 w-full flex flex-col items-center gap-6">
+<button class="p-3 rounded-xl bg-primary/10 text-primary relative group">
+<span class="material-icons">view_column</span>
+<div class="absolute left-14 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none">Dashboard</div>
+</button>
+<button class="p-3 rounded-xl text-slate-400 hover:text-primary hover:bg-slate-100 dark:hover:bg-surface-dark transition-colors relative group">
+<span class="material-icons">trending_up</span>
+<div class="absolute left-14 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none">Analytics</div>
+</button>
+<button class="p-3 rounded-xl text-slate-400 hover:text-primary hover:bg-slate-100 dark:hover:bg-surface-dark transition-colors relative group">
+<span class="material-icons">bookmarks</span>
+<div class="absolute left-14 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none">Saved</div>
+</button>
+<button class="p-3 rounded-xl text-slate-400 hover:text-primary hover:bg-slate-100 dark:hover:bg-surface-dark transition-colors relative group">
+<span class="material-icons">notifications</span>
+<div class="absolute top-2 right-2 w-2 h-2 rounded-full bg-red-500"></div>
+<div class="absolute left-14 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none">Notifications</div>
+</button>
+</nav>
+<div class="mt-auto flex flex-col gap-4 items-center">
+<button class="w-8 h-8 rounded-full overflow-hidden border border-slate-200 dark:border-border-dark">
+<img alt="User avatar" class="w-full h-full object-cover" data-alt="Profile picture of a user" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPfVLkGXVbVjNH_0X4K5ry9FixwMgKTtI8PWLqWVDCjR8_-cpGH2WPtwfZHumGiD3dMMDW7pBlOKpdRenROiqK_Fl58fPcfjnFBETDtHuURVj-Cmf98Ip0GA5-1lq43nPpfAMc2etOMi-jQJGrDaZQsDorL6PMOl-hPcrGev0GPtIM7gYv3ISrWRKjoAOHNZL95uw0P2TfCNA1wDUcnIjbScPiSHfV1AyjxAluErNWKawhyL6PtgKJuCOaXYNsoFgUXJgjXrw0KUkG"/>
+</button>
+<button class="p-3 rounded-xl text-slate-400 hover:text-slate-200 hover:bg-surface-dark transition-colors">
+<span class="material-icons">settings</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col h-full overflow-hidden">
+<!-- Top Bar -->
+<header class="h-16 flex-shrink-0 bg-white dark:bg-background-dark border-b border-gray-200 dark:border-border-dark px-6 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<h1 class="text-xl font-bold text-slate-800 dark:text-white tracking-tight">Tech Pulse</h1>
+<div class="h-4 w-px bg-slate-200 dark:bg-border-dark mx-2"></div>
+<div class="flex items-center text-sm text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-surface-dark px-3 py-1.5 rounded-lg border border-transparent focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/50 transition-all w-64 md:w-96">
+<span class="material-icons text-lg mr-2">search</span>
+<input class="bg-transparent border-none outline-none w-full placeholder-slate-400 text-slate-700 dark:text-slate-200 h-full p-0 text-sm focus:ring-0" placeholder="Search keywords across all sources..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-2 px-3 py-1.5 text-xs font-medium bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors shadow-lg shadow-primary/20">
+<span class="material-icons text-sm">add</span> Add Column
+                </button>
+</div>
+</header>
+<!-- Columns Container -->
+<div class="flex-1 overflow-x-auto overflow-y-hidden bg-slate-50 dark:bg-[#0c131a]">
+<div class="flex h-full p-4 gap-4 w-max min-w-full">
+<!-- Hacker News Column -->
+<div class="w-[380px] md:w-[420px] flex-shrink-0 flex flex-col h-full bg-white dark:bg-surface-dark rounded-xl border border-gray-200 dark:border-border-dark shadow-sm">
+<!-- Column Header -->
+<div class="p-4 border-b border-gray-100 dark:border-border-dark flex items-center justify-between flex-shrink-0">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-[#ff6600] flex items-center justify-center text-white font-bold text-lg">Y</div>
+<div>
+<h2 class="font-bold text-slate-800 dark:text-white text-sm">Hacker News</h2>
+<p class="text-xs text-slate-500">Top Stories</p>
+</div>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 hover:text-primary transition-colors">
+<span class="material-icons text-lg">refresh</span>
+</button>
+<button class="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 hover:text-white transition-colors">
+<span class="material-icons text-lg">tune</span>
+</button>
+</div>
+</div>
+<!-- HN List Content -->
+<div class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-2">
+<!-- HN Item 1 -->
+<article class="p-3 bg-slate-50 dark:bg-card-dark rounded-lg hover:bg-slate-100 dark:hover:bg-[#253341] transition-colors border border-transparent dark:border-white/5 group cursor-pointer">
+<div class="flex items-start gap-3">
+<span class="text-primary font-bold text-sm mt-0.5">1.</span>
+<div>
+<h3 class="text-sm font-medium text-slate-800 dark:text-slate-100 leading-snug group-hover:text-primary transition-colors">PostgreSQL 16 Released</h3>
+<div class="flex items-center gap-2 mt-2 text-xs text-slate-500 dark:text-slate-400">
+<span class="flex items-center gap-1"><span class="material-icons text-[10px]">arrow_upward</span> 482</span>
+<span>•</span>
+<span>125 comments</span>
+<span>•</span>
+<span>postgresql.org</span>
+</div>
+<div class="mt-1 text-xs text-slate-500">3 hours ago by <span class="text-slate-400 dark:text-slate-300">pg_dev</span></div>
+</div>
+</div>
+</article>
+<!-- HN Item 2 -->
+<article class="p-3 bg-slate-50 dark:bg-card-dark rounded-lg hover:bg-slate-100 dark:hover:bg-[#253341] transition-colors border border-transparent dark:border-white/5 group cursor-pointer">
+<div class="flex items-start gap-3">
+<span class="text-primary font-bold text-sm mt-0.5">2.</span>
+<div>
+<h3 class="text-sm font-medium text-slate-800 dark:text-slate-100 leading-snug group-hover:text-primary transition-colors">Show HN: I built a collaborative browser in WebAssembly</h3>
+<div class="flex items-center gap-2 mt-2 text-xs text-slate-500 dark:text-slate-400">
+<span class="flex items-center gap-1 text-primary"><span class="material-icons text-[10px]">local_fire_department</span> 892</span>
+<span>•</span>
+<span>340 comments</span>
+<span>•</span>
+<span>github.com</span>
+</div>
+<div class="mt-1 text-xs text-slate-500">5 hours ago by <span class="text-slate-400 dark:text-slate-300">wasm_fan</span></div>
+</div>
+</div>
+</article>
+<!-- HN Item 3 -->
+<article class="p-3 bg-slate-50 dark:bg-card-dark rounded-lg hover:bg-slate-100 dark:hover:bg-[#253341] transition-colors border border-transparent dark:border-white/5 group cursor-pointer">
+<div class="flex items-start gap-3">
+<span class="text-primary font-bold text-sm mt-0.5">3.</span>
+<div>
+<h3 class="text-sm font-medium text-slate-800 dark:text-slate-100 leading-snug group-hover:text-primary transition-colors">Why we're leaving the cloud</h3>
+<div class="flex items-center gap-2 mt-2 text-xs text-slate-500 dark:text-slate-400">
+<span class="flex items-center gap-1"><span class="material-icons text-[10px]">arrow_upward</span> 1.2k</span>
+<span>•</span>
+<span>890 comments</span>
+<span>•</span>
+<span>hey.com</span>
+</div>
+<div class="mt-1 text-xs text-slate-500">8 hours ago by <span class="text-slate-400 dark:text-slate-300">dhh</span></div>
+</div>
+</div>
+</article>
+<!-- HN Item 4 -->
+<article class="p-3 bg-slate-50 dark:bg-card-dark rounded-lg hover:bg-slate-100 dark:hover:bg-[#253341] transition-colors border border-transparent dark:border-white/5 group cursor-pointer">
+<div class="flex items-start gap-3">
+<span class="text-primary font-bold text-sm mt-0.5">4.</span>
+<div>
+<h3 class="text-sm font-medium text-slate-800 dark:text-slate-100 leading-snug group-hover:text-primary transition-colors">NASA's Osiris-Rex returns asteroid sample</h3>
+<div class="flex items-center gap-2 mt-2 text-xs text-slate-500 dark:text-slate-400">
+<span class="flex items-center gap-1"><span class="material-icons text-[10px]">arrow_upward</span> 305</span>
+<span>•</span>
+<span>45 comments</span>
+<span>•</span>
+<span>nasa.gov</span>
+</div>
+<div class="mt-1 text-xs text-slate-500">2 hours ago by <span class="text-slate-400 dark:text-slate-300">astro_nerd</span></div>
+</div>
+</div>
+</article>
+<!-- HN Item 5 -->
+<article class="p-3 bg-slate-50 dark:bg-card-dark rounded-lg hover:bg-slate-100 dark:hover:bg-[#253341] transition-colors border border-transparent dark:border-white/5 group cursor-pointer">
+<div class="flex items-start gap-3">
+<span class="text-primary font-bold text-sm mt-0.5">5.</span>
+<div>
+<h3 class="text-sm font-medium text-slate-800 dark:text-slate-100 leading-snug group-hover:text-primary transition-colors">A deep dive into Python 3.12 performance improvements</h3>
+<div class="flex items-center gap-2 mt-2 text-xs text-slate-500 dark:text-slate-400">
+<span class="flex items-center gap-1"><span class="material-icons text-[10px]">arrow_upward</span> 156</span>
+<span>•</span>
+<span>32 comments</span>
+<span>•</span>
+<span>python.org</span>
+</div>
+<div class="mt-1 text-xs text-slate-500">4 hours ago by <span class="text-slate-400 dark:text-slate-300">py_lover</span></div>
+</div>
+</div>
+</article>
+<button class="w-full py-3 mt-2 text-sm text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary hover:bg-slate-100 dark:hover:bg-white/5 rounded transition-colors flex items-center justify-center gap-2">
+                            Load More <span class="material-icons text-sm">expand_more</span>
+</button>
+</div>
+</div>
+<!-- Reddit Column -->
+<div class="w-[380px] md:w-[420px] flex-shrink-0 flex flex-col h-full bg-white dark:bg-surface-dark rounded-xl border border-gray-200 dark:border-border-dark shadow-sm">
+<!-- Column Header -->
+<div class="p-4 border-b border-gray-100 dark:border-border-dark flex items-center justify-between flex-shrink-0">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-[#FF4500] flex items-center justify-center text-white font-bold">
+<img alt="Reddit Logo" class="w-5 h-5 filter brightness-0 invert" data-alt="Reddit Alien Logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9saOrltN54WCavUerkEqM-gP-e3cDJcL6cPtPWSjD_1nrIdrWiGMyYZHsznK5POi1ImyoUhvTTm2layLcKCHphEt0MxBKlV8yFryCQJUitF7L6MEVePIT0yk2qpLG8RrT3pqWR5ISb9xSUK6UTc4d3cekZX7tUlrAK2MFpRk1-LcgSyivc_8bZjKSRsrP6uZDa0QgjpXX3Dw7RCFvkvtKrSSWfo3enRdncdyKxZjs-eRuaJXSSFXFvvQZoQ_6nE6SZY9CxdWTLu-y"/>
+</div>
+<div>
+<h2 class="font-bold text-slate-800 dark:text-white text-sm">Reddit</h2>
+<p class="text-xs text-slate-500">r/startups + r/technology</p>
+</div>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 hover:text-primary transition-colors">
+<span class="material-icons text-lg">refresh</span>
+</button>
+<button class="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 hover:text-white transition-colors">
+<span class="material-icons text-lg">filter_list</span>
+</button>
+</div>
+</div>
+<!-- Reddit List Content -->
+<div class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-2">
+<!-- Reddit Item 1 -->
+<article class="p-3 bg-slate-50 dark:bg-card-dark rounded-lg hover:bg-slate-100 dark:hover:bg-[#253341] transition-colors border border-transparent dark:border-white/5 group cursor-pointer">
+<div class="flex gap-3">
+<div class="flex flex-col items-center gap-1 pt-1 min-w-[24px]">
+<span class="material-icons text-slate-400 hover:text-[#FF4500] cursor-pointer text-lg">arrow_upward</span>
+<span class="text-xs font-bold text-slate-700 dark:text-slate-300">2.4k</span>
+<span class="material-icons text-slate-400 hover:text-blue-500 cursor-pointer text-lg">arrow_downward</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="text-[10px] font-bold text-slate-800 dark:text-slate-200 bg-slate-200 dark:bg-white/10 px-1.5 py-0.5 rounded">r/technology</span>
+<span class="text-[10px] text-slate-500">4h ago</span>
+</div>
+<h3 class="text-sm font-medium text-slate-800 dark:text-slate-100 leading-snug mb-2 group-hover:text-primary transition-colors">EU passes new legislation regulating AI development in open source projects</h3>
+<div class="h-28 w-full rounded-lg overflow-hidden mb-2 relative">
+<img alt="Circuit board representing AI technology" class="w-full h-full object-cover" data-alt="Abstract technology circuit board visual" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIcttcBBf2NgOrs9wm7JZxRErrOVdr3m4OQWbLndPiC-5FXMNB3d8ksojTgrQ4myerC3t9cvCe7hyIWzK_oy4ZjPv-jhryvHu_RWMmkRF16pCBYbHFeW8baqMxIa6wOwvIg1CWNuyCwb49TUoQOUdki8fYbvZm1AkstQIInQmUmKO7zCz-RbWSZ5wPisUuF1pKaghP7QY8DOccB1_gBIafWUDl8eGvo0TMHnM2eLlPSlj17zm2bATtfr-8FxIpxSYBKqBFaQRM7TbJ"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+</div>
+<div class="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
+<span class="flex items-center gap-1 hover:bg-slate-200 dark:hover:bg-white/10 px-1.5 py-0.5 rounded transition-colors"><span class="material-icons text-sm">mode_comment</span> 432 Comments</span>
+<span class="flex items-center gap-1 hover:bg-slate-200 dark:hover:bg-white/10 px-1.5 py-0.5 rounded transition-colors"><span class="material-icons text-sm">share</span> Share</span>
+</div>
+</div>
+</div>
+</article>
+<!-- Reddit Item 2 -->
+<article class="p-3 bg-slate-50 dark:bg-card-dark rounded-lg hover:bg-slate-100 dark:hover:bg-[#253341] transition-colors border border-transparent dark:border-white/5 group cursor-pointer">
+<div class="flex gap-3">
+<div class="flex flex-col items-center gap-1 pt-1 min-w-[24px]">
+<span class="material-icons text-slate-400 hover:text-[#FF4500] cursor-pointer text-lg">arrow_upward</span>
+<span class="text-xs font-bold text-slate-700 dark:text-slate-300">89</span>
+<span class="material-icons text-slate-400 hover:text-blue-500 cursor-pointer text-lg">arrow_downward</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="text-[10px] font-bold text-slate-800 dark:text-slate-200 bg-slate-200 dark:bg-white/10 px-1.5 py-0.5 rounded">r/startups</span>
+<span class="text-[10px] text-slate-500">1h ago</span>
+</div>
+<h3 class="text-sm font-medium text-slate-800 dark:text-slate-100 leading-snug mb-2 group-hover:text-primary transition-colors">How do you validate your SaaS idea before writing a single line of code?</h3>
+<p class="text-xs text-slate-400 dark:text-slate-400 line-clamp-3 mb-2">I've been working on a few side projects but they always fail to gain traction. I want to change my approach and validate first. What are your strategies for B2B...</p>
+<div class="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
+<span class="flex items-center gap-1 hover:bg-slate-200 dark:hover:bg-white/10 px-1.5 py-0.5 rounded transition-colors"><span class="material-icons text-sm">mode_comment</span> 24 Comments</span>
+<span class="flex items-center gap-1 hover:bg-slate-200 dark:hover:bg-white/10 px-1.5 py-0.5 rounded transition-colors"><span class="material-icons text-sm">share</span> Share</span>
+</div>
+</div>
+</div>
+</article>
+<!-- Reddit Item 3 -->
+<article class="p-3 bg-slate-50 dark:bg-card-dark rounded-lg hover:bg-slate-100 dark:hover:bg-[#253341] transition-colors border border-transparent dark:border-white/5 group cursor-pointer">
+<div class="flex gap-3">
+<div class="flex flex-col items-center gap-1 pt-1 min-w-[24px]">
+<span class="material-icons text-slate-400 hover:text-[#FF4500] cursor-pointer text-lg">arrow_upward</span>
+<span class="text-xs font-bold text-slate-700 dark:text-slate-300">512</span>
+<span class="material-icons text-slate-400 hover:text-blue-500 cursor-pointer text-lg">arrow_downward</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="text-[10px] font-bold text-slate-800 dark:text-slate-200 bg-slate-200 dark:bg-white/10 px-1.5 py-0.5 rounded">r/artificial</span>
+<span class="text-[10px] text-slate-500">6h ago</span>
+</div>
+<h3 class="text-sm font-medium text-slate-800 dark:text-slate-100 leading-snug mb-2 group-hover:text-primary transition-colors">New model outperforms GPT-4 on math benchmarks</h3>
+<div class="h-28 w-full rounded-lg overflow-hidden mb-2 relative">
+<img alt="Abstract AI Neural Network visualization" class="w-full h-full object-cover" data-alt="Abstract colorful neural network pattern" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTf_MnpkU9r2klFFuTy-C0vX_zVzOXZ2uHMq67JCa79jY3UBimlG71XPLV3DNnKN23vBROJ51u7hBK-LQUc_245CJiDpOmqOvXDI6zJI5PFN9KsCxlGn74XZ6_WZYoPlv2FqKsKsPDlQ4wJ2O2dY2v7LeIfLsT54EpsY8qAg6J-FMWsDsBPMORVfr8aAc7-2zQIVf9FZBEvkYbbmhjd3YXEh507Bby4F_zXejMof7dBisxTxU5hMN_mtQDbWYg3zHRauE2HGOoDF7e"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+</div>
+<div class="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
+<span class="flex items-center gap-1 hover:bg-slate-200 dark:hover:bg-white/10 px-1.5 py-0.5 rounded transition-colors"><span class="material-icons text-sm">mode_comment</span> 112 Comments</span>
+<span class="flex items-center gap-1 hover:bg-slate-200 dark:hover:bg-white/10 px-1.5 py-0.5 rounded transition-colors"><span class="material-icons text-sm">share</span> Share</span>
+</div>
+</div>
+</div>
+</article>
+<button class="w-full py-3 mt-2 text-sm text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary hover:bg-slate-100 dark:hover:bg-white/5 rounded transition-colors flex items-center justify-center gap-2">
+                            Load More <span class="material-icons text-sm">expand_more</span>
+</button>
+</div>
+</div>
+<!-- Product Hunt Column -->
+<div class="w-[380px] md:w-[420px] flex-shrink-0 flex flex-col h-full bg-white dark:bg-surface-dark rounded-xl border border-gray-200 dark:border-border-dark shadow-sm">
+<!-- Column Header -->
+<div class="p-4 border-b border-gray-100 dark:border-border-dark flex items-center justify-between flex-shrink-0">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-[#DA552F] flex items-center justify-center text-white font-bold text-lg">P</div>
+<div>
+<h2 class="font-bold text-slate-800 dark:text-white text-sm">Product Hunt</h2>
+<p class="text-xs text-slate-500">Today's Launches</p>
+</div>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 hover:text-primary transition-colors">
+<span class="material-icons text-lg">refresh</span>
+</button>
+<button class="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 hover:text-white transition-colors">
+<span class="material-icons text-lg">calendar_today</span>
+</button>
+</div>
+</div>
+<!-- PH List Content -->
+<div class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-2">
+<!-- PH Item 1 -->
+<article class="p-3 bg-slate-50 dark:bg-card-dark rounded-lg hover:bg-slate-100 dark:hover:bg-[#253341] transition-colors border border-transparent dark:border-white/5 group cursor-pointer">
+<div class="flex gap-4 items-start">
+<img alt="App Icon for AI Writer" class="w-14 h-14 rounded-lg object-cover bg-slate-800" data-alt="Modern app icon with gradient" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDOWZ866Z4tRJ9lhup4JEFClWRR8K2xtohTh5QghUn5qFl5sAVaGZf_5AwuAwGjoGF0Dc_A8fJ-PH3NOHgEpFmsTfOpJCIDfCJ5ZH81S2alpckZX3hoJhQy0gRsTWsPuSmFZ7YRO7Y33uypL0B14XDVi_y7RGDwSyDJN3ZngK-AsIp8pJAAjpa-qC3JVbx4vNfSnWNV7r4rBcq3AcYqOYWGvlc96btGx7kw4mdS11YXOAmc34zG27AdlDxpxLanGMG33nrW5UaGhnL"/>
+<div class="flex-1 min-w-0">
+<h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 group-hover:text-primary truncate">SuperWrite AI</h3>
+<p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mt-0.5">The ultimate AI writing assistant for busy founders. Generate blogs, emails, and tweets in seconds.</p>
+<div class="flex items-center gap-2 mt-2">
+<span class="text-[10px] font-medium text-slate-500 border border-slate-200 dark:border-slate-700 px-1.5 rounded">Productivity</span>
+<span class="text-[10px] font-medium text-slate-500 border border-slate-200 dark:border-slate-700 px-1.5 rounded">SaaS</span>
+</div>
+</div>
+<div class="flex flex-col items-center gap-1">
+<button class="flex flex-col items-center justify-center w-12 h-14 rounded border border-slate-200 dark:border-slate-600 group-hover:border-primary/50 bg-white dark:bg-background-dark">
+<span class="material-icons text-sm text-slate-400 group-hover:text-primary">arrow_drop_up</span>
+<span class="text-xs font-bold text-slate-700 dark:text-slate-200">542</span>
+</button>
+</div>
+</div>
+</article>
+<!-- PH Item 2 -->
+<article class="p-3 bg-slate-50 dark:bg-card-dark rounded-lg hover:bg-slate-100 dark:hover:bg-[#253341] transition-colors border border-transparent dark:border-white/5 group cursor-pointer relative overflow-hidden">
+<!-- Trending Badge -->
+<div class="absolute top-0 right-0 w-12 h-12">
+<div class="absolute transform rotate-45 bg-primary text-white text-[9px] font-bold py-1 right-[-28px] top-[8px] w-[100px] text-center shadow-sm">HOT</div>
+</div>
+<div class="flex gap-4 items-start">
+<img alt="App Icon for Analytics Tool" class="w-14 h-14 rounded-lg object-cover bg-slate-800" data-alt="Data analytics dashboard icon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3NtoYjvEaQUxxdBwC_6GJpDJU0gv8ucbCRPlN5e5vx7QcHUAUvgA0zhiQ2ZwNmE7YDOEW7SyckgeB_mOeXxfW6ZeuXN-zJB4tURW2K4Kbh06RlCKZ36C443fXPEncT0dsWUI9MJrAVKCIK3b_qM3rL0nPau82Qdwe31bJjcP9N3cmkR6qEMVUTo9IwYlZpwL8VFutIRCzoLvr35oWHVajxj2JZpc9M1lurAC2RHCBPeDgQM0O4DblEBg3t-zm6PRKcIVkKC7pVCox"/>
+<div class="flex-1 min-w-0">
+<h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 group-hover:text-primary truncate">MetricFlow</h3>
+<p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mt-0.5">Visualize your entire startup's data in one place without code.</p>
+<div class="flex items-center gap-2 mt-2">
+<span class="text-[10px] font-medium text-slate-500 border border-slate-200 dark:border-slate-700 px-1.5 rounded">Analytics</span>
+</div>
+</div>
+<div class="flex flex-col items-center gap-1">
+<button class="flex flex-col items-center justify-center w-12 h-14 rounded border border-slate-200 dark:border-slate-600 group-hover:border-primary/50 bg-white dark:bg-background-dark">
+<span class="material-icons text-sm text-slate-400 group-hover:text-primary">arrow_drop_up</span>
+<span class="text-xs font-bold text-slate-700 dark:text-slate-200">890</span>
+</button>
+</div>
+</div>
+</article>
+<!-- PH Item 3 -->
+<article class="p-3 bg-slate-50 dark:bg-card-dark rounded-lg hover:bg-slate-100 dark:hover:bg-[#253341] transition-colors border border-transparent dark:border-white/5 group cursor-pointer">
+<div class="flex gap-4 items-start">
+<img alt="App Icon for Dev Tool" class="w-14 h-14 rounded-lg object-cover bg-slate-800" data-alt="Abstract code brackets icon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnnc4dGq0AT_t21bGe8RuI42oguymXRbdyimFTwPz4OBpXgsZkSZY7PsqVFPHyeCURvwceitTveMm3939DoeALUXXoS04VHk1U6VBiqivxxOBG3S7T7iAVWm2OAnESojaPfIrUuuL8t7clijMrjvpjeCq03iNRR6h8q7N38FBChJ4Io7Tm8EW0qJRcyp0LGs2glJeBoNJDYqVMmXZQWOKIwSiWSpfGhpsuHLpYVN_Gh0ucfOuDqUH0E8AivcHoEs8aZPhMZcYj15Vi"/>
+<div class="flex-1 min-w-0">
+<h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 group-hover:text-primary truncate">DevSpace 2.0</h3>
+<p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mt-0.5">Kubernetes development made easy. Deploy faster and debug instantly.</p>
+<div class="flex items-center gap-2 mt-2">
+<span class="text-[10px] font-medium text-slate-500 border border-slate-200 dark:border-slate-700 px-1.5 rounded">Developer Tools</span>
+</div>
+</div>
+<div class="flex flex-col items-center gap-1">
+<button class="flex flex-col items-center justify-center w-12 h-14 rounded border border-slate-200 dark:border-slate-600 group-hover:border-primary/50 bg-white dark:bg-background-dark">
+<span class="material-icons text-sm text-slate-400 group-hover:text-primary">arrow_drop_up</span>
+<span class="text-xs font-bold text-slate-700 dark:text-slate-200">230</span>
+</button>
+</div>
+</div>
+</article>
+<!-- PH Item 4 -->
+<article class="p-3 bg-slate-50 dark:bg-card-dark rounded-lg hover:bg-slate-100 dark:hover:bg-[#253341] transition-colors border border-transparent dark:border-white/5 group cursor-pointer">
+<div class="flex gap-4 items-start">
+<img alt="App Icon for Design Tool" class="w-14 h-14 rounded-lg object-cover bg-slate-800" data-alt="Abstract colorful design palette icon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqIAdGghNv9zS9a91zqHB-dAPjSIzW7eC4u5fGsaNU73r1tlW3FN29WEXHD3lo2JKVH6Vzu_Y4VigZHWKCI_ulSxy2m8H_5qqdvhYSJND5cdu4d4UAgbSihf89xuHKYSsU6RmrVDE8qZiAWpGs97KDRCkQAw5JqaURVEw9BlKIw7_kGszr7asrlEuecnly8x1R25yzQkstjxDrxV_uajXNiyTu6ymD_wHdMpNxYGsyf6qXm7oxoK4vdSPM76_HZ1brokMMztJddMSX"/>
+<div class="flex-1 min-w-0">
+<h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 group-hover:text-primary truncate">Paletter</h3>
+<p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mt-0.5">Generate beautiful color palettes from text descriptions using AI.</p>
+<div class="flex items-center gap-2 mt-2">
+<span class="text-[10px] font-medium text-slate-500 border border-slate-200 dark:border-slate-700 px-1.5 rounded">Design</span>
+<span class="text-[10px] font-medium text-slate-500 border border-slate-200 dark:border-slate-700 px-1.5 rounded">AI</span>
+</div>
+</div>
+<div class="flex flex-col items-center gap-1">
+<button class="flex flex-col items-center justify-center w-12 h-14 rounded border border-slate-200 dark:border-slate-600 group-hover:border-primary/50 bg-white dark:bg-background-dark">
+<span class="material-icons text-sm text-slate-400 group-hover:text-primary">arrow_drop_up</span>
+<span class="text-xs font-bold text-slate-700 dark:text-slate-200">185</span>
+</button>
+</div>
+</div>
+</article>
+<button class="w-full py-3 mt-2 text-sm text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary hover:bg-slate-100 dark:hover:bg-white/5 rounded transition-colors flex items-center justify-center gap-2">
+                            Load More <span class="material-icons text-sm">expand_more</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>
