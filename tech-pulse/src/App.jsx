@@ -167,7 +167,7 @@ async function fetchReddit({ query, after, signal }) {
 
 async function fetchNASA({ signal }) {
   const base = "https://api.nasa.gov/planetary/apod";
-  const params = new URLSearchParams({ api_key: import.meta.env.VITE_NASA_API_KEY || "DEMO_KEY" });
+  const params = new URLSearchParams({ api_key: import.meta.env.VITE_NASA_API_KEY || "McO1EuGGc6maPIowuhkdYGWxkJsYQgozNVAkRvYR" });
   const res = await fetch(`${base}?${params.toString()}`, { signal });
   if (!res.ok) throw new Error(`NASA APOD request failed (${res.status})`);
   const d = await res.json();
