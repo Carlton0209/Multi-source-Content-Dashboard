@@ -591,11 +591,24 @@ export default function App() {
         return;
       }
 
-      if (col.type === "nasa") {
-        const res = await fetchNASA({ signal: abortRef.current?.signal });
-        setStore((p) => ({ ...p, [colId]: { ...p[colId], items: res.items, loading: false, error: "", hasMore: false } }));
-        return;
+            if (!res.ok) {
+        return {
+          items: [{
+            id: "nasa_fallback",
+            source: "nasa",
+            title: "NASA APOD temporarily unavailable",
+            summary: "Rate limit reached. Please refresh later.",
+            author: "NASA",
+            date: new Date(),
+            imageUrl: "",
+            score: 0,
+            comments: 0,
+            host: "api.nasa.gov",
+          }],
+          hasMore: false,
+        };
       }
+
 
       if (col.type === "quote") {
         const res = await fetchQuote({ signal: abortRef.current?.signal });
