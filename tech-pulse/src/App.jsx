@@ -208,7 +208,7 @@ async function fetchQuote({ signal }) {
         title: q.author ? `Quote by ${q.author}` : "Quote",
         url: "",
         date: q.dateAdded ? isoToDate(q.dateAdded) : null,
-        summary: `"${q.content}"`,
+        summary: `“${q.content}”`,
         author: q.author || "",
         host: "quotable.io",
         tags: Array.isArray(q.tags) ? q.tags : [],
@@ -654,13 +654,13 @@ export default function App() {
   }, [columns, store, globalSearch]);
 
   return (
-    <div className="fixed inset-0 bg-[#101922] text-slate-200">
-      <div className="flex h-full w-full">
+    <div className="h-screen overflow-hidden bg-[#101922] text-slate-200">
+      <div className="flex h-full">
         {/* Sidebar */}
         <aside className="z-20 flex w-16 flex-shrink-0 flex-col items-center border-r border-[#2a3b4d] bg-[#0c131a] py-6 md:w-20">
           <div className="mb-8">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#137fec] shadow-lg shadow-[#137fec]/20">
-              <span className="text-xl text-white">✺</span>
+              <span className="text-white">✺</span>
             </div>
           </div>
 
@@ -685,7 +685,7 @@ export default function App() {
           </nav>
 
           <div className="mt-auto flex flex-col items-center gap-4">
-            <div className="h-8 w-8 overflow-hidden rounded-full border border-[#2a3b4d] bg-gradient-to-br from-blue-400 to-purple-600" />
+            <div className="h-8 w-8 overflow-hidden rounded-full border border-[#2a3b4d] bg-white/10" />
             <button className="rounded-xl p-3 text-slate-400 transition-colors hover:bg-[#182430] hover:text-slate-200" type="button">
               <Icon name="settings" />
             </button>
@@ -761,7 +761,7 @@ export default function App() {
                 Apply
               </button>
             </div>
-            <div className="ml-auto hidden text-xs text-slate-500 lg:block">Global search filters fetched cards; refresh pulls new content.</div>
+            <div className="ml-auto text-xs text-slate-500">Global search filters fetched cards; refresh pulls new content.</div>
           </section>
 
           {/* Columns */}
@@ -786,32 +786,10 @@ export default function App() {
       </div>
 
       <style>{`
-        * {
-          box-sizing: border-box;
-        }
-        
-        body {
-          margin: 0;
-          padding: 0;
-          overflow: hidden;
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar { 
-          width: 6px; 
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar-track { 
-          background: rgba(0,0,0,0.1); 
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar-thumb { 
-          background-color: #2a3b4d; 
-          border-radius: 20px; 
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { 
-          background-color: #137fec; 
-        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #2a3b4d; border-radius: 20px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: #137fec; }
       `}</style>
     </div>
   );
